@@ -1,0 +1,62 @@
+Libshumate for Ruby
+Copyright 2026 General Intelligence Systems
+
+This product includes software developed by the GNOME Project and by Collabora.
+
+--------------------------------------------------------------------------------
+libshumate (the crate)
+--------------------------------------------------------------------------------
+
+The native extension under ext/libshumate links the libshumate crate, the
+gir-generated gtk4-rs bindings over the GNOME map library. This gem is bindings
+for it and nothing else: every method it defines calls a function of that crate.
+
+  https://gitlab.gnome.org/World/Rust/libshumate-rs
+  Copyright 2021-2026 Corentin Noël and contributors
+  Licensed under the MIT License
+
+--------------------------------------------------------------------------------
+libshumate (the C library)
+--------------------------------------------------------------------------------
+
+The crate above is only a binding. The code that does the work is the C library
+libshumate, which libshumate-sys resolves with pkg-config as `shumate-1.0` and
+links at build time.
+
+  https://gitlab.gnome.org/GNOME/libshumate
+  Copyright 2008-2026 the libshumate contributors
+  Licensed under the GNU Lesser General Public License, version 2.1 or later
+
+This gem is distributed under the Apache License, Version 2.0, and that remains
+true: the LGPL reaches the library it covers, not a work that links it, provided
+the recipient can relink against their own copy. The gem satisfies that two
+ways. The source gem compiles against whichever libshumate the installing
+machine provides, so it never ships one. A precompiled platform gem must either
+carry the library as a shared object the recipient can replace, or not be built
+at all; it may not static-link libshumate, and nothing here configures it to.
+
+Section 6 of the LGPL also requires that this notice say the library is used and
+where to get it, which the paragraphs above do.
+
+--------------------------------------------------------------------------------
+gtk4-rs and gtk-rs-core
+--------------------------------------------------------------------------------
+
+The extension depends on the gtk4 and glib crates directly, for gtk::init, for
+glib::Bytes and for glib::Value. They are the same crates libshumate itself
+resolves, pinned to the same versions so that one glib type registry exists in
+the process rather than two.
+
+  https://github.com/gtk-rs/gtk4-rs
+  https://github.com/gtk-rs/gtk-rs-core
+  Licensed under the MIT License
+
+--------------------------------------------------------------------------------
+On the GTK4 widgets
+--------------------------------------------------------------------------------
+
+libshumate is mostly GtkWidget subclasses, and none of them are bound. A map
+widget means nothing without a window and a main loop, and a GObject cannot be
+held in a Ruby object soundly because magnus requires a wrapped type to be Send.
+What is bound is the arithmetic and the parsing. See the module documentation in
+ext/libshumate/src/lib.rs for the reasoning in full.
