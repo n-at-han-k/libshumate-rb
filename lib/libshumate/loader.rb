@@ -22,6 +22,13 @@ module Shumate
 
     private
 
+    # There is no `pre_load` hook here because libshumate has no init function
+    # to call: `Shumate-1.0.typelib` declares none. GtkSource's loader has to
+    # invoke `gtk_source_init` before anything in that namespace works;
+    # Secret's, like this one, does not. Skipping an init a library *does* need
+    # gives a namespace that loads and then returns nulls or segfaults, so this
+    # was checked against the typelib rather than assumed.
+
     def post_load(repository, namespace)
       require_libraries
     end

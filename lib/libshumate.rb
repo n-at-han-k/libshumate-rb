@@ -25,6 +25,16 @@ require_relative "libshumate/loader"
 # distribution. See the README for the package name; `flake.nix` wires up a dev
 # shell that has it.
 #
+# In an application, `require "gtk4"` before this. `Shumate-1.0.typelib`
+# declares Gtk-4.0, Gsk-4.0 and Gdk-4.0 as dependencies, so if nothing has
+# loaded GTK yet this loader resolves those typelibs itself and Shumate's
+# widgets end up descending from a bare `GtkWidget` defined off the typelib
+# rather than from the `Gtk::Widget` the gtk4 gem defines -- which means they
+# cannot be packed into a `Gtk::Box`. gtk4 is not a dependency of this gem
+# because the namespace is useful without it (map sources, viewports and
+# coordinates are plain GObjects), so the ordering is on the caller. See the
+# README.
+#
 # One trap, paid for already: the typelib must come from the same glib build as
 # the `gobject-introspection` gem. Mix two and GIO is registered twice in one
 # process, which fails as `cannot register existing type 'GTlsCertificate'`.
